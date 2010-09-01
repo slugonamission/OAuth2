@@ -1,0 +1,4 @@
+A client library to implement OAuth 2.0
+
+Prerequisites:
+libcurl
