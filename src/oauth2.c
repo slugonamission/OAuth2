@@ -20,4 +20,48 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <assert.h>
+
 #include "oauth2.h"
+
+oauth2_config* oauth2_init(char* client, char* secret)
+{
+    int input_strlen;
+    oauth2_config* retVal = malloc(sizeof(oauth2_config));
+
+    if(retVal == NULL)
+        return NULL;
+
+    //Copy in the client id etc
+    input_strlen = strlen(client)+1;
+    retVal->client_id = malloc(input_strlen * sizeof(char));
+    strcpy(retVal->client_id, client);
+
+    input_strlen = strlen(secret)+1;
+    retVal->client_secret = malloc(input_strlen);
+    strcpy(retVal->client_secret, secret);
+
+    //Clear the error
+    retVal->last_error.error = OAUTH2_ERROR_NO_ERROR;
+    retVal->last_error.error_description = NULL;
+    retVal->last_error.error_uri = NULL;
+    retVal->last_error.state = NULL;
+}
+
+void oauth2_cleanup(oauth2_config* conf)
+{
+    if(conf == NULL)
+        return;
+
+    //Start freeing stuff up
+    if(conf->client_id != NULL)
+        free(conf->client_id);
+
+    if(conf->client_secret != NULL)
+        free(conf->client_secret);
+    
+    free(conf);
+}

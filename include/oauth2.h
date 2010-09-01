@@ -23,9 +23,59 @@ THE SOFTWARE.
 #ifndef __OAUTH2_H__
 #define __OAUTH2_H__
 
-#define TOKEN_WIDTH 64
-#define TOKEN_SECRET_WIDTH 64
+//Constants
+#ifndef NULL
+  #define NULL 0
+#endif
 
+typedef enum
+{
+    OAUTH2_RESPONSE_CODE = 0,
+    OAUTH2_RESPONSE_TOKEN,
+    OAUTH2_RESPONSE_TOKEN_AND_CODE
+} oauth2_response_type;
+
+typedef enum
+{
+    OAUTH2_GRANT_AUTH_CODE = 0,
+    OAUTH2_GRANT_PASSWORD,
+    OAUTH2_GRANT_ASSERTION,
+    OAUTH2_GRANT_REFRESH
+} oauth2_grant_type;
+
+typedef enum
+{
+    OAUTH2_ERROR_NO_ERROR = 0,
+    OAUTH2_ERROR_INVALID_REQUEST,
+    OAUTH2_ERROR_INVALID_CLIENT,
+    OAUTH2_ERROR_UNAUTHORIZED_CLIENT,
+    OAUTH2_ERROR_REDIRECT_URI_MISMATCH,
+    OAUTH2_ERROR_ACCESS_DENIED,
+    OAUTH2_ERROR_UNSUPPORTED_RESPONSE_TYPE,
+    OAUTH2_ERROR_INVALID_SCOPE,
+    OAUTH2_ERROR_INVALID_GRANT,
+    OAUTH2_ERROR_UNSUPPORTED_GRANT_TYPE,
+} oauth2_error_type;
+
+//Internal structs
+typedef struct _oauth2_error {
+    oauth2_error_type error;
+    char*             error_description;
+    char*             error_uri;
+    char*             state;
+} oauth2_error;
+
+typedef struct _oauth2_config
+{
+    char* client_id;
+    char* client_secret;
+    oauth2_error last_error;
+} oauth2_config;
+
+//Methods
+
+oauth2_config* oauth2_init(char* client, char* secret);
+void oauth2_cleanup(oauth2_config* conf);
 
 
 #endif
