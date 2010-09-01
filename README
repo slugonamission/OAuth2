@@ -2,3 +2,8 @@ A client library to implement OAuth 2.0
 
 Prerequisites:
 libcurl
+cmake
+
+Building:
+Create a new directory, then cd in and run cmake .. . This will generate build files for your platform. Then simply open the build
+files with the build system of your choice.
