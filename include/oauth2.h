@@ -69,12 +69,25 @@ typedef struct _oauth2_config
 {
     char* client_id;
     char* client_secret;
+    char* auth_server_uri;
+    char* redirect_uri;
     oauth2_error last_error;
 } oauth2_config;
 
 //Methods
 
-oauth2_config* oauth2_init(char* client, char* secret);
+//Initialiser
+oauth2_config* oauth2_init(char* client, char* secret, char* auth_server_uri);
+
+//Set the redirect URI for auth code authentication. This must be set before using oauth2_request_auth_code too.
+void oauth2_set_redirect_uri(oauth2_config* conf, char* redirect_uri);
+
+//Returns URL to redirect user to.
+char* oauth2_request_auth_code(oauth2_config* conf, char* scope, char* state);
+char* oauth2_access_auth_code(oauth2_config* conf, char* auth_code, char* scope);
+char* oauth2_access_resource_owner(oauth2_config* conf, char* username, char* password);
+char* oauth2_access_refresh_token(oauth2_config* conf, char* refresh_token);
+char* oauth2_request(oauth2_config* conf, char* uri);  
 void oauth2_cleanup(oauth2_config* conf);
 
 

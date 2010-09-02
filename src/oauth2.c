@@ -27,7 +27,7 @@ THE SOFTWARE.
 
 #include "oauth2.h"
 
-oauth2_config* oauth2_init(char* client, char* secret)
+oauth2_config* oauth2_init(char* client, char* secret, char* auth_server_uri)
 {
     int input_strlen;
     oauth2_config* retVal = malloc(sizeof(oauth2_config));
@@ -43,6 +43,10 @@ oauth2_config* oauth2_init(char* client, char* secret)
     input_strlen = strlen(secret)+1;
     retVal->client_secret = malloc(input_strlen);
     strcpy(retVal->client_secret, secret);
+
+    input_strlen = strlen(auth_server_uri)+1;
+    retVal->auth_server_uri = malloc(input_strlen);
+    strcpy(retVal->auth_server_uri, auth_server_uri);
 
     //Clear the error
     retVal->last_error.error = OAUTH2_ERROR_NO_ERROR;
@@ -63,5 +67,8 @@ void oauth2_cleanup(oauth2_config* conf)
     if(conf->client_secret != NULL)
         free(conf->client_secret);
     
+    if(conf->auth_server_uri != NULL)
+        free(conf->auth_server_uri);
+
     free(conf);
 }

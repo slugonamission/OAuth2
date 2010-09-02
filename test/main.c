@@ -2,7 +2,7 @@
 
 int main(int argc, char** argv)
 {
-    oauth2_config* conf = oauth2_init("foo", "bar");
+    oauth2_config* conf = oauth2_init("foo", "bar", "foobar");
 
     oauth2_cleanup(conf);
 
