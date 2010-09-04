@@ -22,6 +22,8 @@ THE SOFTWARE.
 
 #include "curl_request.h"
 #include <stdlib.h>
+#include <string.h>
+#include <assert.h>
 #include <curl/curl.h>
 
 size_t curl_callback(void *ptr, size_t size, size_t nmemb, void *userdata)
@@ -69,11 +71,11 @@ void data_clean(data* d)
     }
 }
 
-char* curl_make_request(char* url)
+char* curl_make_request(char* url, char* params)
 {
     data* storage;
     data* curr_storage;
-    curl* handle;
+    CURL* handle;
     int data_len;
     char* retVal;
 
@@ -88,6 +90,14 @@ char* curl_make_request(char* url)
     curl_easy_setopt(handle, CURLOPT_URL, url);
     curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, curl_callback);
     curl_easy_setopt(handle, CURLOPT_WRITEDATA, storage);
+
+    //Do we need to add the POST parameters?
+    if(params != NULL)
+    {
+        curl_easy_setopt(handle, CURLOPT_POST, 1);
+        curl_easy_setopt(handle, CURLOPT_COPYPOSTFIELDS, params); //Copy them just incase
+                                                                  //the user does something stupid
+    }
 
     if(curl_easy_perform(handle) != 0)
     {
@@ -115,7 +125,7 @@ char* curl_make_request(char* url)
     data_len = 0;
     while(curr_storage)
     {
-        memcpy(retVal+data_len, curr_storage->data, curr_storage->idx);
+        memcpy(retVal+data_len, curr_storage->d, curr_storage->idx);
         curr_storage = curr_storage->next;
     }
 

@@ -23,14 +23,14 @@ THE SOFTWARE.
 #ifndef __CURL_REQUEST_H__
 #define __CURL_REQUEST_H__
 
-#define BUFFER_LEN 2048; //2KB Buffers
+#define MAX_BUFFER 2048 //2KB Buffers
 
 typedef struct _data {
-    char d[BUFFER_LEN];
-    struct _data next;
+    char d[MAX_BUFFER];
+    struct _data* next;
     int idx;
 } data;
 
-char* curl_make_request(char* url);
+char* curl_make_request(char* url, char* params);
 
 #endif
