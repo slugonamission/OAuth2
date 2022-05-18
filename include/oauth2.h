@@ -57,6 +57,7 @@ typedef struct _oauth2_error {
     char*             state;
 } oauth2_error;
 
+typedef char*(*oauth2_response_handle)(char*);
 typedef struct _oauth2_config
 {
     char* client_id;
@@ -64,6 +65,7 @@ typedef struct _oauth2_config
     char* redirect_uri;
     char* auth_code;
     oauth2_error last_error;
+    oauth2_response_handle access_auth_code_transformer;
 } oauth2_config;
 
 //Methods
@@ -76,11 +78,11 @@ void oauth2_set_redirect_uri(oauth2_config* conf, char* redirect_uri);
 void oauth2_set_auth_code(oauth2_config* conf, char* auth_code);
 
 //Returns URL to redirect user to.
-char* oauth2_request_auth_code(oauth2_config* conf, char* auth_server, char* scope, char* state);
+char* oauth2_request_auth_code(oauth2_config* conf, char* auth_server, char* scope, char* state, char* access_type);
 char* oauth2_access_auth_code(oauth2_config* conf, char* auth_server, char* auth_code, char* scope);
 char* oauth2_access_resource_owner(oauth2_config* conf, char* auth_server, char* username, char* password);
 char* oauth2_access_refresh_token(oauth2_config* conf, char* refresh_token);
-char* oauth2_request(oauth2_config* conf, char* uri, char* params);  
+char* oauth2_request(oauth2_config* conf, char* uri, char* params);
 void oauth2_cleanup(oauth2_config* conf);
 
 

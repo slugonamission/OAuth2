@@ -81,18 +81,21 @@ void oauth2_set_auth_code(oauth2_config* conf, char* auth_code)
     strcpy(conf->auth_code, auth_code);
 }
 
-char* oauth2_request_auth_code(oauth2_config* conf, char* auth_server, char* scope, char* state)
+char* oauth2_request_auth_code(oauth2_config* conf, char* auth_server, char* scope, char* state, char* access_type)
 {
     int core_len;
     int scope_len;
     int state_len;
+    int access_type_len;
     char* core_fmt;
     char* scope_fmt;
     char* state_fmt;
+    char* access_type_fmt;
     char* final_str;
 
     scope_len = 1;
     state_len = 1;
+    access_type_len = 1;
 
     assert(conf != NULL);
 
@@ -102,6 +105,7 @@ char* oauth2_request_auth_code(oauth2_config* conf, char* auth_server, char* sco
     core_fmt = "%s?response_type=code&client_id=%s&redirect_uri=%s";
     scope_fmt = "&scope=%s";
     state_fmt = "&state=%s";
+    access_type_fmt = "&access_type=%s";
 
     //Get the string lengths
     core_len = snprintf(NULL, 0, (const char*)core_fmt, auth_server, conf->client_id, conf->redirect_uri) + 1;
@@ -109,11 +113,14 @@ char* oauth2_request_auth_code(oauth2_config* conf, char* auth_server, char* sco
         scope_len = snprintf(NULL, 0, (const char*)scope_fmt, scope) + 1;
     if(state != NULL)
         state_len = snprintf(NULL, 0, (const char*)state_fmt, state) + 1;
+    if(access_type != NULL)
+        access_type_len = snprintf(NULL, 0, (const char*)access_type_fmt, access_type) + 1;
 
     //Actually build the string
     final_str = malloc(((core_len-1)
                         +(scope_len-1)
-                        +(state_len-1)+1)*sizeof(char));
+                        +(state_len-1)
+                        +(access_type_len-1) +1)*sizeof(char));
 
     sprintf(final_str, (const char*)core_fmt, auth_server, conf->client_id, conf->redirect_uri);
     if(scope != NULL)
@@ -125,6 +132,11 @@ char* oauth2_request_auth_code(oauth2_config* conf, char* auth_server, char* sco
         sprintf((char*)(final_str+(core_len-1)+(scope_len-1)),
                 (const char*)state_fmt,
                 state);
+
+    if(access_type != NULL)
+        sprintf((char*)(final_str+(core_len-1)+(scope_len-1)+(state_len-1)),
+                (const char*)access_type_fmt,
+                access_type);
 
     return final_str;
 }
@@ -153,25 +165,30 @@ char* oauth2_access_auth_code(oauth2_config* conf, char* auth_server, char* auth
     output = curl_make_request(auth_server, uri);
     free(uri);
 
+    if (conf->access_auth_code_transformer != NULL) {
+        return conf->access_auth_code_transformer(output);
+    }
+
     //Strip out the access token
-    acc_pos_s = strstr(output, "access_token=");
+    #define __OAUTH2_ACCESS_TOKEN_STR "access_token="
+    acc_pos_s = strstr(output, __OAUTH2_ACCESS_TOKEN_STR);
     if(acc_pos_s == NULL)
     {
         printf("%s\n", output);
         free(output);
         return NULL;
     }
-    
-    acc_pos_s += 13; //Skip past access_token
+
+    acc_pos_s += sizeof(__OAUTH2_ACCESS_TOKEN_STR); //Skip past access_token
     //Find the end of the token
     acc_pos_e = acc_pos_s;
     while(*acc_pos_e != '&' && *acc_pos_e != '\0') ++acc_pos_e;
 
     //Now extract it
-    acc_pos_len = acc_pos_e-acc_pos_s;
-    acc_code = malloc(sizeof(char)*acc_pos_len);
+    acc_pos_len = acc_pos_e - acc_pos_s;
+    acc_code = malloc(sizeof(char) * acc_pos_len);
 
-    memcpy(acc_code, acc_pos_s, acc_pos_e-acc_pos_s);
+    memcpy(acc_code, acc_pos_s, acc_pos_len);
     free(output);
 
     return acc_code;
@@ -259,6 +276,6 @@ void oauth2_cleanup(oauth2_config* conf)
 
     if(conf->client_secret != NULL)
         free(conf->client_secret);
-    
+
     free(conf);
 }

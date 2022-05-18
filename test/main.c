@@ -1,11 +1,12 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "oauth2.h"
 
 int main(int argc, char** argv)
 {
     oauth2_config* conf = oauth2_init("client_id", "client_secret");
     oauth2_set_redirect_uri(conf, "http://notarealhosthonest.com/");
-    char* redir_uri = oauth2_request_auth_code(conf, "https://graph.facebook.com/oauth/authorize", "publish_stream", "LOL");
+    char* redir_uri = oauth2_request_auth_code(conf, "https://graph.facebook.com/oauth/authorize", "publish_stream", "LOL", NULL);
 
     printf("Visit this url and hit authorize: %s\n", redir_uri);
     printf("Now put the auth token here: ");

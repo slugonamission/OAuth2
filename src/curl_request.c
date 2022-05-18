@@ -26,6 +26,14 @@ THE SOFTWARE.
 #include <assert.h>
 #include <curl/curl.h>
 
+#define MAX_BUFFER 2048 //2KB Buffers
+
+typedef struct _data {
+    char d[MAX_BUFFER];
+    struct _data* next;
+    int idx;
+} data;
+
 size_t curl_callback(void *ptr, size_t size, size_t nmemb, void *userdata)
 {
     size_t idx;
