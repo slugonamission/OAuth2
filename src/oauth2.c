@@ -57,6 +57,7 @@ oauth2_config* oauth2_init(char* client, char* secret)
     retVal->last_error.error_uri = NULL;
     retVal->last_error.state = NULL;
     retVal->auth_code = NULL;
+	return retVal;
 }
 
 void oauth2_set_redirect_uri(oauth2_config* conf, char* redirect_uri)
