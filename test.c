@@ -10,7 +10,7 @@ int main(int argc, char** argv)
 
     printf("Visit this url and hit authorize: %s\n", redir_uri);
     printf("Now put the auth token here: ");
-    
+
     char code[255];
     scanf("%s", code);
 
@@ -26,7 +26,7 @@ int main(int argc, char** argv)
     scanf("%s", status);
     char status2[255];
     sprintf(status2, "message=%s", status);
-    
+
     rv = oauth2_request(conf, "https://graph.facebook.com/slugonamission/feed", status2);
 
     printf("%s\n", rv);

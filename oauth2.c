@@ -1,24 +1,4 @@
-/*
-Copyright (c) 2010 Jamie Garside
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-*/
+/* See LICENSE file for copyright and license details. */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -31,33 +11,33 @@ THE SOFTWARE.
 oauth2_config* oauth2_init(char* client, char* secret)
 {
     int input_strlen;
-    oauth2_config* retVal = malloc(sizeof(oauth2_config));
+    oauth2_config* ret_val = malloc(sizeof(oauth2_config));
 
-    if(retVal == NULL)
+    if(ret_val == NULL)
         return NULL;
 
     //Copy in the client id etc
     input_strlen = strlen(client)+1;
-    retVal->client_id = malloc(input_strlen * sizeof(char));
-    strcpy(retVal->client_id, client);
+    ret_val->client_id = malloc(input_strlen * sizeof(char));
+    strcpy(ret_val->client_id, client);
 
-    assert(retVal->client_id[input_strlen-1] == '\0');
+    assert(ret_val->client_id[input_strlen-1] == '\0');
 
     input_strlen = strlen(secret)+1;
-    retVal->client_secret = malloc(input_strlen);
-    strcpy(retVal->client_secret, secret);
+    ret_val->client_secret = malloc(input_strlen);
+    strcpy(ret_val->client_secret, secret);
 
-    assert(retVal->client_secret[input_strlen-1] == '\0');
+    assert(ret_val->client_secret[input_strlen-1] == '\0');
 
-    retVal->redirect_uri = NULL;
+    ret_val->redirect_uri = NULL;
 
     //Clear the error
-    retVal->last_error.error = OAUTH2_ERROR_NO_ERROR;
-    retVal->last_error.error_description = NULL;
-    retVal->last_error.error_uri = NULL;
-    retVal->last_error.state = NULL;
-    retVal->auth_code = NULL;
-	return retVal;
+    ret_val->last_error.error = OAUTH2_ERROR_NO_ERROR;
+    ret_val->last_error.error_description = NULL;
+    ret_val->last_error.error_uri = NULL;
+    ret_val->last_error.state = NULL;
+    ret_val->auth_code = NULL;
+	return ret_val;
 }
 
 void oauth2_set_redirect_uri(oauth2_config* conf, char* redirect_uri)
@@ -211,10 +191,10 @@ char* oauth2_access_resource_owner(oauth2_config* conf, char* auth_server, char*
 
     //Get the length of the query
     query_len = snprintf(NULL, 0, query_fmt, conf->client_id, username, password);
-    
+
     //Allocate space for it and request
     uri = malloc(query_len+1);
-    
+
     sprintf(uri, query_fmt, conf->client_id, username, password);
 
     //Now make the request!
@@ -222,7 +202,7 @@ char* oauth2_access_resource_owner(oauth2_config* conf, char* auth_server, char*
 
     //Cleanup
     free(uri);
-    
+
     return output;
 }
 
@@ -237,8 +217,8 @@ char* oauth2_request(oauth2_config* conf, char* uri, char* params)
     //For now, we'll just include the access code with the request vars
     //This is discouraged, but I don't know if most providers actually
     //support the header-field method (Facebook is still at draft 0...)
-    
-    char* retVal;
+
+    char* ret_val;
     char* uri2;
     int uri_len;
 
@@ -247,7 +227,7 @@ char* oauth2_request(oauth2_config* conf, char* uri, char* params)
     assert(conf->client_id != NULL);
     assert(conf->auth_code != NULL);
     assert(uri != NULL);
-    
+
     //Are we POSTing?
     if(params != NULL)
     {
@@ -256,9 +236,9 @@ char* oauth2_request(oauth2_config* conf, char* uri, char* params)
         uri2 = malloc(sizeof(char)*uri_len);
         sprintf(uri2, "%s&access_token=%s", params, conf->auth_code);
 
-        retVal = curl_make_request(uri, uri2);
+        ret_val = curl_make_request(uri, uri2);
         free(uri2);
-        return retVal;
+        return ret_val;
     }
     else
     {

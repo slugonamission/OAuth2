@@ -1,5 +1,7 @@
-/*
-Copyright (c) 2010 Jamie Garside
+MIT/X Consortium License
+
+© 2010 Jamie Garside
+© 2022 Bharatvaj Hemanth <bharatvaj@getsh.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -18,11 +20,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
-
-#ifndef __CURL_REQUEST_H__
-#define __CURL_REQUEST_H__
-
-char* curl_make_request(char* url, char* params);
-
-#endif
